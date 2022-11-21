@@ -1,5 +1,7 @@
 <?php
-
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix' => 'products'], function(){
+    Route::group(['prefix' => '{product}'], function(){
+        Route::get('/', [ProductController::class, 'show']);
+        Route::post('/variant', [ProductVariantController::class, 'store']);
+    });
+    Route::group(['prefix' => 'inventory'], function(){
+        Route::get('form', [InventoryController::class, 'index'])->name('inventory.form');
+        Route::get('apply', [InventoryController::class, 'takeoutInventory'])->name('inventory.apply');
+    });
+    Route::get('', [ProductController::class, 'index']);
+    Route::post('', [ProductController::class, 'store']);
 });
